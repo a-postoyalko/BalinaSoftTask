@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.postoyalko.activities.RegistrationActivity"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:isScrollContainer="true"
+    android:id="@+id/registrationFrameLayout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_registration_margin"
+        android:layout_marginRight="@dimen/activity_registration_margin"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:id="@+id/linear_layout">
+
+        <ImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/margin_botom_logo"
+            android:layout_marginTop="@dimen/margin_top_logo"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_height"
+            android:text="@string/email"
+            android:id="@+id/loginTextView"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size_text_view" />
+        <AutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_text_height"
+            android:id="@+id/loginEditText"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size_edit_text"
+            android:hint="@string/email_hint"
+            android:textColorHint="@color/white_hint"
+            android:background="@drawable/edit_text_bg"
+            android:textCursorDrawable="@drawable/color_cursor"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_height"
+            android:layout_marginTop="@dimen/margin_top_textview"
+            android:text="@string/password"
+            android:id="@+id/passwordTextView"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size_text_view" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_text_height">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingEnd="@dimen/drawable_right_padding"
+                android:inputType="textPassword"
+                android:id="@+id/passwordEditText"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size_edit_text"
+                android:hint="@string/password_hint"
+                android:textColorHint="@color/white_hint"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:background="@drawable/edit_text_bg"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/passwordDrawable"
+                android:layout_gravity="right|center_vertical"
+                android:src="@drawable/ic_view"/>
+        </FrameLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/button_margin_top"
+            android:text="@string/registration"
+            android:background="@drawable/registration_button"
+            android:id="@+id/registrationButton"
+            android:layout_marginBottom="@dimen/button_margin_bottom"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+</FrameLayout>

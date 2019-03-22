@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BalinaSoftTask</string>
+    <string name="registration">Регистрация</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+    <string name="email_hint">введите email</string>
+    <string name="password_hint">введите пароль</string>
+    <string name="invalid_password">Пароль должен содержать не менее %1$d и не более %2$d символов.</string>
+    <string name="invalid_email">Недействительный или неполный адрес</string>
+    <string name="empty_email">Укажите адрес</string>
+    <string name="check_internet_connection">Проверьте интернет-соединение</string>
+</resources>

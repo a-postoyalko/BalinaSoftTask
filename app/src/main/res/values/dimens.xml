@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activity_registration_margin">30sp</dimen>
+    <dimen name="activity_registration_margin_logo">70sp</dimen>
+    <dimen name="corner_radius">5sp</dimen>
+    <dimen name="font_size_edit_text">16sp</dimen>
+    <dimen name="font_size_text_view">14sp</dimen>
+    <dimen name="line_height">16sp</dimen>
+    <dimen name="list_item_padding">10sp</dimen>
+    <dimen name="margin_botom_logo">80sp</dimen>
+    <dimen name="margin_top_logo">40sp</dimen>
+    <dimen name="edit_text_height">40sp</dimen>
+    <dimen name="margin_top_textview">20sp</dimen>
+    <dimen name="drawable_right_padding">30sp</dimen>
+    <dimen name="button_margin_top">10sp</dimen>
+    <dimen name="button_margin_bottom">40sp</dimen>
+</resources>
