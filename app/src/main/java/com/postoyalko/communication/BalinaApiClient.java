@@ -11,7 +11,7 @@ public class BalinaApiClient {
     public static final String BASE_URL = "http://junior.balinasoft.com";
     private static Retrofit retrofit = null;
     private static BalinaApi balinaApi = null;
-    public static final int LOGIN_ALREADY_USE = 400;
+    public static final int BAD_REQUEST = 400;
     public static final int SUCCESS = 200;
     public static final String LOGIN_ALREADY_USE_MESSAGE = "Login already use";
     public static final String SUCCESS_MESSAGE = "Registration success";

@@ -17,6 +17,18 @@ public class AccountResponse {
     @SerializedName("error")
     private String error;
 
+    @SerializedName("valid")
+    private ValidationMessage validationMessage;
+
+    public ValidationMessage getValidationMessage() {
+        return validationMessage;
+    }
+
+    public void setValidationMessage(ValidationMessage validationMessage) {
+        this.validationMessage = validationMessage;
+    }
+
+
     public String getError() {
         return error;
     }
@@ -41,7 +53,7 @@ public class AccountResponse {
         this.data = data;
     }
 
-    private class AccountData {
+    public class AccountData {
         @SerializedName("login")
         private String login;
         @SerializedName("token")
@@ -71,6 +83,30 @@ public class AccountResponse {
 
         public void setUserId(int userId) {
             this.userId = userId;
+        }
+    }
+
+    public class ValidationMessage {
+
+        @SerializedName("field")
+        private String field;
+        @SerializedName("message")
+        private String message;
+
+        public String getField() {
+            return field;
+        }
+
+        public void setField(String field) {
+            this.field = field;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 }

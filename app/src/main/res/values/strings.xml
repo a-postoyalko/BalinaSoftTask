@@ -9,4 +9,5 @@
     <string name="invalid_email">Недействительный или неполный адрес</string>
     <string name="empty_email">Укажите адрес</string>
     <string name="check_internet_connection">Проверьте интернет-соединение</string>
+    <string name="login_lenght">Длина email должна быть от %1$d до %2$d</string>
 </resources>

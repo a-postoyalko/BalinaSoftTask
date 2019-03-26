@@ -1,6 +1,7 @@
 package com.postoyalko.activities;
 
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -17,18 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.postoyalko.R;
-import com.postoyalko.communication.AccountBody;
-import com.postoyalko.communication.AccountResponse;
-import com.postoyalko.communication.BalinaApiClient;
-import com.postoyalko.font.AppFonts;
-import com.postoyalko.utilities.AccountUtils;
-import com.postoyalko.utilities.NetworkUtils;
+import com.postoyalko.presenters.IRegistrationMVP;
+import com.postoyalko.presenters.RegistrationPresenter;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class RegistrationActivity extends AppCompatActivity {
+public class RegistrationActivity extends AppCompatActivity implements IRegistrationMVP.IRegistrationView{
 
     private Button registrationButton;
     private ImageView logoImageView;
@@ -39,14 +32,16 @@ public class RegistrationActivity extends AppCompatActivity {
     private FrameLayout frameLayout;
     private ImageView passwordDrawable;
     private ArrayAdapter<String> adapter;
-    private AccountBody accountBody;
     private int maxHeight;
     private boolean passwordVisible = false;
+
+    private RegistrationPresenter registrationPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        registrationPresenter = RegistrationPresenter.getRegistrationPresenter(this, getApplicationContext());
         registrationButton = (Button) findViewById(R.id.registrationButton);
         getWindow().setBackgroundDrawableResource(R.drawable.bg);
         logoImageView = (ImageView) findViewById(R.id.logoImageView);
@@ -58,13 +53,11 @@ public class RegistrationActivity extends AppCompatActivity {
         loginTextView = (TextView) findViewById(R.id.loginTextView);
         passwordTextView = (TextView) findViewById(R.id.passwordTextView);
         passwordDrawable = (ImageView) findViewById(R.id.passwordDrawable);
-        accountBody = new AccountBody();
-        Typeface typeface = AppFonts.getInstance(this);
+        Typeface typeface = registrationPresenter.getFont();
         loginTextView.setTypeface(typeface);
         passwordTextView.setTypeface(typeface);
         loginEditText.setTypeface(typeface);
         passwordEditText.setTypeface(typeface);
-
         passwordDrawable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,44 +84,31 @@ public class RegistrationActivity extends AppCompatActivity {
         registrationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    if(!AccountUtils.isValidEmail(loginEditText.getText().toString())) {
-                    loginEditText.requestFocus();
-                    loginEditText.setError(AccountUtils.getInvalidEmailMessage(getApplicationContext(),loginEditText.getText().toString()));
-                }
-                else if(!AccountUtils.isValidPassword(passwordEditText.getText().toString())) {
-                    passwordEditText.requestFocus();
-                    passwordEditText.setError(AccountUtils.getInvalidPasswordMessage(getApplicationContext()));
-                }
-                else {
-                    if (NetworkUtils.isNetworkAvailable(getApplicationContext())) {
-                        accountBody.setLogin(loginEditText.getText().toString());
-                        accountBody.setPassword(passwordEditText.getText().toString());
-                        BalinaApiClient.getApi().registerAccount(accountBody).enqueue(new RegistrationCallback());
+                final String email = loginEditText.getText().toString();
+                new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        String checkEmailMessage = registrationPresenter.checkEmail(email);
+                        return checkEmailMessage;
                     }
-                    else {
-                        Toast.makeText(getApplicationContext(), getString(R.string.check_internet_connection), Toast.LENGTH_SHORT).show();
+
+                    @Override
+                    protected void onPostExecute(String checkEmailMessage) {
+                        super.onPostExecute(checkEmailMessage);
+                        String checkPasswordMessage = registrationPresenter.checkPassword(passwordEditText.getText().toString());
+                        if (checkEmailMessage != null) {
+                            loginEditText.requestFocus();
+                            loginEditText.setError(checkEmailMessage);
+                        } else if (checkPasswordMessage != null) {
+                            passwordEditText.requestFocus();
+                            passwordEditText.setError(checkPasswordMessage);
+                        } else {
+                            registrationPresenter.registrationButtonWasClicked(loginEditText.getText().toString(), passwordEditText.getText().toString());
+                        }
                     }
-                }
+                }.execute();
             }
         });
-    }
-
-    private class RegistrationCallback implements Callback<AccountResponse> {
-        @Override
-        public void onResponse(Call<AccountResponse> call, Response<AccountResponse> response) {
-            AccountResponse accountResponse = response.body();
-            String message = BalinaApiClient.LOGIN_ALREADY_USE_MESSAGE;
-            if(accountResponse != null) {
-                if(accountResponse.getStatus() == BalinaApiClient.SUCCESS) {
-                    message = BalinaApiClient.SUCCESS_MESSAGE;
-                }
-            }
-            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-        }
-        @Override
-        public void onFailure(Call<AccountResponse> call, Throwable t) {
-            Toast.makeText(getApplicationContext(), BalinaApiClient.ERROR_MESSAGE, Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override
@@ -143,21 +123,14 @@ public class RegistrationActivity extends AppCompatActivity {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            int occurrences = 0;
-            String enteredString = s.toString();
-
-            for (char c : enteredString.toCharArray()) {
-                if (c == AccountUtils.AT_SYMBOL) {
-                    occurrences++;
-                }
-            }
-            if (occurrences == 1) {
+            String[] emails = registrationPresenter.loginTextChanged(s);
+            if (emails != null) {
                 adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item,
-                        AccountUtils.getEmails(enteredString));
-                loginEditText.showDropDown();
-                loginEditText.setAdapter(adapter);
-            } else if (occurrences == 0) {
-                loginEditText.dismissDropDown();
+                        emails);
+                if (!adapter.isEmpty()) {
+                    loginEditText.showDropDown();
+                    loginEditText.setAdapter(adapter);
+                }
             }
         }
         @Override
@@ -171,12 +144,17 @@ public class RegistrationActivity extends AppCompatActivity {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (!AccountUtils.isValidPassword(s.toString())) {
-                passwordEditText.setError(AccountUtils.getInvalidPasswordMessage(getApplicationContext()));
-            }
+            if(registrationPresenter.passwordTextChanged(s) != null)
+                passwordEditText.setError(registrationPresenter.passwordTextChanged(s));
+
         }
         @Override
         public void afterTextChanged(Editable s) {}
+    }
+
+    @Override
+    public void showToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 }
